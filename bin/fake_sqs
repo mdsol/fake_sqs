@@ -11,7 +11,8 @@ options = {
   :host => "0.0.0.0",
   :verbose => false,
   :daemonize => false,
-  :database => ":memory:"
+  :database => ":memory:",
+  :xmlns => "http://queue.amazonaws.com/doc/2012-11-05/"
 }
 
 parser = OptionParser.new do |o|
@@ -48,11 +49,15 @@ parser = OptionParser.new do |o|
     options[:log] = logfile
   end
 
+  o.on "-x", "--xmlns NAMESPACE", "Which XML namespace to use for xml responses. (default: #{options[:xmlns]})" do |xmlns|
+    options[:xmlns] = xmlns
+  end
+  
   o.on_tail "--version", "Shows the version" do
     puts "fake_sqs version #{FakeSQS::VERSION}"
     exit
   end
-
+  
   o.on_tail "-h", "--help", "Shows this help page" do
     puts o
     exit
