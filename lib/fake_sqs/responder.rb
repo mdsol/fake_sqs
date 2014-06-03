@@ -13,7 +13,7 @@ module FakeSQS
     def call(name, &block)
       xml = Builder::XmlMarkup.new(:indent => 4)
 	  
-      xml.tag!("#{name}Response", "xmlns" => @xmlns ) do
+      xml.tag!("#{name}Response", "xmlns" => @xmlns) do
         if block
           xml.tag! "#{name}Result" do
             yield xml
