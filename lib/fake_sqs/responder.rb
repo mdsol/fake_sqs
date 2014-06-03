@@ -7,7 +7,7 @@ module FakeSQS
 	attr_reader :xmlns
 	
 	def initialize(options = {})
-		@xmlns = options.fetch(:xmlns)
+		@xmlns = options.fetch(:xmlns, "")
 	end
 	
     def call(name, &block)
