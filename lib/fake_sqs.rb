@@ -40,7 +40,8 @@ module FakeSQS
     app.set :bind, options[:host] if options[:host]
     app.set :server, options[:server] if options[:server]
     server = FakeSQS.server(port: options[:port], host: options[:host])
-    app.set :api, FakeSQS.api(server: server, database: options[:database])
+    responder = FakeSQS.responder(xmlns: options[:xmlns])
+    app.set :api, FakeSQS.api(server: server, database: options[:database], responder: responder)
     app
   end
 
@@ -53,7 +54,7 @@ module FakeSQS
     API.new(
       server: options.fetch(:server),
       queues: queues(db),
-      responder: responder
+      responder: options.fetch(:responder)
     )
   end
 
@@ -61,8 +62,8 @@ module FakeSQS
     Queues.new(queue_factory: queue_factory, database: database)
   end
 
-  def self.responder
-    Responder.new
+  def self.responder(options = {})
+    Responder.new(xmlns: options.fetch(:xmlns))
   end
 
   def self.queue_factory

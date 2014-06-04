@@ -4,6 +4,9 @@ require 'verbose_hash_fetch'
 
 describe FakeSQS::Responder do
 
+  #use explicit subject for the xmlns test
+  subject(:subject_with_xmlns) { FakeSQS::Responder.new(xmlns: "urn:example.com") }
+	
   it "yields xml" do
     xml = subject.call :GetQueueUrl do |xml|
       xml.QueueUrl "example.com"
@@ -16,7 +19,21 @@ describe FakeSQS::Responder do
       fetch("QueueUrl")
     url.should eq "example.com"
   end
+	
+   it "yields xml with a namespace" do
+    xml = subject_with_xmlns.call :GetQueueUrl do |xml|
+      xml.QueueUrl "example.com"
+    end
 
+    data = Hash.from_xml(xml)
+	
+    xmlns = data.
+      fetch("GetQueueUrlResponse").
+      fetch("xmlns")
+	  
+	xmlns.should eq "urn:example.com"
+  end
+  
   it "skips result if no block is given" do
     xml = subject.call :DeleteQueue
 
