@@ -45,6 +45,10 @@ module FakeSQS
     post "/fail" do
       settings.api.api_fail(params[:action], params[:error])
     end
+    
+    post "/clear_failure" do
+      settings.api.clear_failure
+    end
 
   end
 end

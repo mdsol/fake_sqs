@@ -162,6 +162,11 @@ fake_sqs.api_fail(<action>)
 
 where ```<action>``` is ```send_message``` or ```receive_message``` (for now) to simulate a failure when sending or receiving an sqs message
 
+To clear failures, call clear_failure:
+```
+fake_sqs.clear_failure
+```
+
 ## Development
 
 Run all the specs:
