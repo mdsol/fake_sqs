@@ -19,6 +19,7 @@ Done so far are:
 * Deleting messages (and in batch)
 * Changing queue attributes (but not all, and no validation)
 * Setting visibility timeouts for messages
+* Simulating failures when sending or receiving messages
 
 Certain bits are left off on purpose, to make it easier to work with, such as:
 
@@ -152,6 +153,18 @@ describe "something with sqs", :sqs do
     queue = AWS::SQS.new.queues.create("my-queue")
   end
 end
+```
+
+Supports simulation of message failures by calling api_fail:
+```
+fake_sqs.api_fail(<action>)
+```
+
+where ```<action>``` is ```send_message``` or ```receive_message``` (for now) to simulate a failure when sending or receiving an sqs message
+
+To clear failures, call clear_failure:
+```
+fake_sqs.clear_failure
 ```
 
 ## Development

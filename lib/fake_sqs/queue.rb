@@ -6,12 +6,13 @@ module FakeSQS
   MessageNotInflight = Class.new(RuntimeError)
   ReadCountOutOfRange = Class.new(RuntimeError)
   ReceiptHandleIsInvalid = Class.new(RuntimeError)
+  InvalidAction = Class.new(RuntimeError)
 
   class Queue
 
     VISIBILITY_TIMEOUT = 30
 
-    attr_reader :name, :message_factory, :arn, :queue_attributes
+    attr_reader :name, :message_factory, :arn, :queue_attributes, :fail_actions
 
     def initialize(options = {})
       @message_factory = options.fetch(:message_factory)
@@ -20,6 +21,7 @@ module FakeSQS
       @arn = options.fetch("Arn") { "arn:aws:sqs:us-east-1:#{SecureRandom.hex}:#{@name}" }
       @queue_attributes = options.fetch("Attributes") { {} }
       @lock = Monitor.new
+      @fail_actions = []
       reset
     end
 
@@ -44,6 +46,7 @@ module FakeSQS
     end
 
     def send_message(options = {})
+      fail InvalidAction if @fail_actions.include?(:send_message)
       with_lock do
         message = message_factory.new(options)
         @messages << message
@@ -52,6 +55,9 @@ module FakeSQS
     end
 
     def receive_message(options = {})
+      
+      fail InvalidAction if @fail_actions.include?(:receive_message)
+            
       amount = Integer options.fetch("MaxNumberOfMessages") { "1" }
 
       fail ReadCountOutOfRange, amount if amount > 10
