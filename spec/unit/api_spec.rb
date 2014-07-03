@@ -50,7 +50,7 @@ describe FakeSQS::API do
   
   context 'simulates failure' do
     before do
-      @queues = [@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => {})]
+      @queues = [@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => MessageFactory.new)]
       @api = FakeSQS::API.new(:queues => @queues)
     end
     
@@ -62,6 +62,12 @@ describe FakeSQS::API do
     it "fails on receiving message" do
       @api.api_fail(:receive_message)
       expect { @queue1.receive_message }.to raise_error FakeSQS::InvalidAction
+    end
+    
+    it "resets failures" do
+      @api.clear_failure
+      expect { @queue1.send_message }.to_not raise_error 
+      expect { @queue1.receive_message }.to_not raise_error 
     end
   end
 
