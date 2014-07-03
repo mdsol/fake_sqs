@@ -52,19 +52,19 @@ describe FakeSQS::API do
     before do
       @queues = [@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => MessageFactory.new)]
       @api = FakeSQS::API.new(:queues => @queues)
+      @api.api_fail(:send_message)
+      @api.api_fail(:receive_message)
     end
     
     it "fails on sending message" do
-      @api.api_fail(:send_message)
       expect { @queue1.send_message }.to raise_error FakeSQS::InvalidAction
     end
     
     it "fails on receiving message" do
-      @api.api_fail(:receive_message)
       expect { @queue1.receive_message }.to raise_error FakeSQS::InvalidAction
     end
     
-    it "resets failures" do
+    it "resets failures after setting" do
       @api.clear_failure
       expect { @queue1.send_message }.to_not raise_error 
       expect { @queue1.receive_message }.to_not raise_error 
