@@ -1,5 +1,5 @@
 require 'sinatra/base'
-
+require 'debugger'
 module FakeSQS
   class WebInterface < Sinatra::Base
 
@@ -41,6 +41,10 @@ module FakeSQS
 
     post "/:queue" do |queue|
       settings.api.call(action, queue, params)
+    end
+    
+    post "/:fail" do
+      settings.api.api_fail(params[:action], params[:error])
     end
 
   end

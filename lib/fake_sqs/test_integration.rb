@@ -45,6 +45,10 @@ module FakeSQS
     def expire
       connection.put("/", "")
     end
+    
+    def api_fail(action)
+      connection.post("/fail", {action: action}.to_json)
+    end
 
     def url
       "http://#{host}:#{port}"

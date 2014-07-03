@@ -47,5 +47,22 @@ describe FakeSQS::API do
     queues.should_receive(:expire)
     api.expire
   end
+  
+  context 'simulates failure' do
+    before do
+      @queues = [@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => {})]
+      @api = FakeSQS::API.new(:queues => @queues)
+    end
+    
+    it "fails on sending message" do
+      @api.api_fail(:send_message)
+      expect { @queue1.send_message }.to raise_error FakeSQS::InvalidAction
+    end
+    
+    it "fails on receiving message" do
+      @api.api_fail(:receive_message)
+      expect { @queue1.receive_message }.to raise_error FakeSQS::InvalidAction
+    end
+  end
 
 end
