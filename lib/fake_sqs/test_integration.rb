@@ -47,7 +47,7 @@ module FakeSQS
     end
     
     def api_fail(action)
-      connection.post("/fail", {action: action}.to_json)
+      connection.post("/fail", "action=#{action.to_s}")
     end
     
     def clear_failure

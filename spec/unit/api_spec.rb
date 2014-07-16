@@ -13,15 +13,16 @@ class FakeSQS::Actions::TheAction
 end
 
 describe FakeSQS::API do
+  
+  let(:queues) { double :queues }
 
   it "delegates actions to classes" do
-    queues = double :queues
-    allow(queues).to receive(:transaction).and_yield
-    api = FakeSQS::API.new(:queues => queues)
+    allow(@queues).to receive(:transaction).and_yield
+    api = FakeSQS::API.new(:queues => @queues)
 
     response = api.call("TheAction", {:foo => "bar"})
 
-    response[:options].should eq :queues => queues
+    response[:options].should eq :queues => @queues
     response[:params].should eq :foo => "bar"
   end
 
@@ -35,22 +36,20 @@ describe FakeSQS::API do
   end
 
   it "resets queues" do
-    queues = double :queues
-    api = FakeSQS::API.new(:queues => queues)
-    queues.should_receive(:reset)
+    api = FakeSQS::API.new(:queues => @queues)
+    @queues.should_receive(:reset)
     api.reset
   end
 
   it "expires messages in queues" do
-    queues = double :queues
-    api = FakeSQS::API.new(:queues => queues)
-    queues.should_receive(:expire)
+    api = FakeSQS::API.new(:queues => @queues)
+    @queues.should_receive(:expire)
     api.expire
   end
   
   context 'simulates failure' do
     before do
-      @queues = [@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => MessageFactory.new)]
+      @queues.stub(:list).and_return([@queue1=FakeSQS::Queue.new("QueueName" => 'default', :message_factory => MessageFactory.new)])
       @api = FakeSQS::API.new(:queues => @queues)
       @api.api_fail(:send_message)
       @api.api_fail(:receive_message)
