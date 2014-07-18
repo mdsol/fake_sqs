@@ -58,12 +58,12 @@ module FakeSQS
     
     # Allow for simulating queue action failures
     def api_fail(action)
-      queues.each { |q| q.fail_actions.push action.to_sym }
+      queues.list.each { |q| q.fail_actions.push action.to_sym }
     end
     
     # Clear existing simulation queue failures
     def clear_failure
-      queues.map {|q| q.fail_actions.clear}
+      queues.list.map {|q| q.fail_actions.clear}
     end
 
   end

@@ -27,6 +27,14 @@ module FakeSQS
       settings.api.expire
       200
     end
+    
+    post "/fail" do
+      settings.api.api_fail(params['action'])
+    end
+    
+    post "/clear_failure" do
+      settings.api.clear_failure
+    end
 
     post "/" do
       params['logger'] = logger
@@ -40,14 +48,6 @@ module FakeSQS
 
     post "/:queue" do |queue|
       settings.api.call(action, queue, params)
-    end
-    
-    post "/fail" do
-      settings.api.api_fail(params[:action], params[:error])
-    end
-    
-    post "/clear_failure" do
-      settings.api.clear_failure
     end
 
   end
