@@ -1,9 +1,11 @@
 FROM ruby:2.1.2
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /var/data/fake_sqs
 
-ADD . /usr/src/app
+RUN mkdir -p /app
+WORKDIR /app
+
+ADD . /app
 RUN bundle install --system
 
 EXPOSE 4568
