@@ -19,7 +19,7 @@ Done so far are:
 * Deleting messages (and in batch)
 * Changing queue attributes (but not all, and no validation)
 * Setting visibility timeouts for messages
-* Simulating failures when sending or receiving messages
+* Purge Queue
 
 Certain bits are left off on purpose, to make it easier to work with, such as:
 
@@ -75,6 +75,17 @@ AWS.config(
   :access_key_id     => "access key id",
   :secret_access_key => "secret access key"
 )
+```
+
+```javascript
+var aws = require('aws-sdk');
+var sqs = new aws.SQS({
+  endpoint: 'http://localhost:4568',
+  apiVersion: '2012-11-05',
+  accessKeyId: 'access key id',
+  secretAccessKey: 'secret access key',
+  region: 'region'
+});
 ```
 
 If you have the configuration options for other libraries, please give them to

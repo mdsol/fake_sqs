@@ -58,6 +58,10 @@ module FakeSQS
       "http://#{host}:#{port}"
     end
 
+    def uri
+      URI(url)
+    end
+
     def up?
       @pid && connection.get("/").code.to_s == "200"
     rescue Errno::ECONNREFUSED
@@ -67,7 +71,7 @@ module FakeSQS
     private
 
     def option(key)
-      options.fetch(key) { AWS.config.public_send(key) }
+      options.fetch(key)
     end
 
     def database
