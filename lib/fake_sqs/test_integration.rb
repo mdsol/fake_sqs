@@ -23,7 +23,7 @@ module FakeSQS
     end
 
     def start!
-      args = [ binfile, "-p", port.to_s, verbose, logging, "--database", database, { :out => out, :err => out } ].flatten.compact
+      args = [ binfile, "-p", port.to_s, verbose, logging, database, { :out => out, :err => out } ].flatten.compact
       @pid = Process.spawn(*args)
       wait_until_up
     end
@@ -58,6 +58,10 @@ module FakeSQS
       "http://#{host}:#{port}"
     end
 
+    def uri
+      URI(url)
+    end
+
     def up?
       @pid && connection.get("/").code.to_s == "200"
     rescue Errno::ECONNREFUSED
@@ -67,11 +71,15 @@ module FakeSQS
     private
 
     def option(key)
-      options.fetch(key) { AWS.config.public_send(key) }
+      options.fetch(key, nil)
     end
 
     def database
-      options.fetch(:database)
+      if db = option(:database)
+        [ "--database", db ]
+      else
+        []
+      end
     end
 
     def verbose
@@ -83,7 +91,7 @@ module FakeSQS
     end
 
     def logging
-      if (file = ENV["SQS_LOG"] || options[:log])
+      if (file = ENV["SQS_LOG"] || option(:log))
         [ "--log", file ]
       else
         []
@@ -115,7 +123,7 @@ module FakeSQS
     end
 
     def debug?
-      ENV["DEBUG"].to_s == "true" || options[:debug]
+      ENV["DEBUG"].to_s == "true" || option(:debug)
     end
 
   end
