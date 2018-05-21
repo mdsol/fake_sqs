@@ -14,7 +14,7 @@ end
 
 RSpec.describe FakeSQS::API do
   before do
-    @queues = double :queues
+    @queues = double(:queues)
   end
 
   it "delegates actions to classes" do
