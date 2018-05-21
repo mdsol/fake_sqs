@@ -1,10 +1,10 @@
 # Fake SQS [![Build Status](https://secure.travis-ci.org/iain/fake_sqs.png)](http://travis-ci.org/iain/fake_sqs)
 
-Inspired by [Fake DynamoDB] [fake_dynamo], this is an AWS SQS compatible
-message queue that can be ran locally. This makes it ideal for integration
+Fake SQS is inspired by [Fake DynamoDB](fake_dynamo). It is an AWS SQS compatible
+message queue that can be run locally. This makes it ideal for integration
 testing, just like you would have a local database running. Fake SQS doesn't
 persist anything, not even the queues themselves. You'll have to create the
-queues everytime you start it.
+queues every time you start it.
 
 This implementation is **not complete** yet, but should be useful already.
 
@@ -64,35 +64,21 @@ $ fake_sqs --database /path/to/database.yml
 
 Messages are not persisted, just the queues.
 
-This is an example of how to configure the official [aws-sdk gem] [aws-sdk], to
-let it talk to Fake SQS.
+This is an example of how to configure the official [aws-sdk gem](https://aws.amazon.com/sdk-for-ruby/) to let it talk to Fake SQS:
 
 ``` ruby
-AWS.config(
-  :use_ssl           => false,
-  :sqs_endpoint      => "localhost",
-  :sqs_port          => 4568,
-  :access_key_id     => "access key id",
-  :secret_access_key => "secret access key"
+Aws.config.update(
+  credentials: Aws::Credentials.new('<access_key_id>', '<secret_access_key>'),
+  region: 'us-east-1
+  use_ssl: false,
+  sqs_endpoint: 'localhost',
+  sqs_port: 4568
 )
 ```
 
-```javascript
-var aws = require('aws-sdk');
-var sqs = new aws.SQS({
-  endpoint: 'http://localhost:4568',
-  apiVersion: '2012-11-05',
-  accessKeyId: 'access key id',
-  secretAccessKey: 'secret access key',
-  region: 'region'
-});
-```
+If you have the configuration options for other libraries then make a pull request to update this documentation with them.
 
-If you have the configuration options for other libraries, please give them to
-me.
-
-To reset the entire server, during tests for example, send a DELETE request to
-the server. For example:
+To reset the entire server, during tests for example, send a DELETE request to the server. For example:
 
 ```
 $ curl -X DELETE http://localhost:4568/
@@ -100,7 +86,7 @@ $ curl -X DELETE http://localhost:4568/
 
 Within SQS, after receiving, messages will be available again automatically
 after a certain time. While this is not implemented (for now at least), you can
-trigger this behavior at at will, with a PUT request.
+trigger this behavior at will with a PUT request:
 
 ```
 $ curl -X PUT http://localhost:4568/
@@ -109,20 +95,20 @@ $ curl -X PUT http://localhost:4568/
 
 ### Test Integration
 
-When making integration tests for your app, you can easily include Fake SQS.
+When making integration tests for your app, you can include Fake SQS.
 
-Here are the methods you need to run FakeSQS programmatically.
+Here are the methods you need to run FakeSQS programmatically:
 
 ``` ruby
 require "fake_sqs/test_integration"
 
 # globally, before the test suite starts:
-AWS.config(
-  use_ssl:            false,
-  sqs_endpoint:       "localhost",
-  sqs_port:           4568,
-  access_key_id:      "fake access key",
-  secret_access_key:  "fake secret key",
+Aws.config.update(
+  credentials: Aws::Credentials.new('<access_key_id>', '<secret_access_key>'),
+  region: 'us-east-1
+  use_ssl: false,
+  sqs_endpoint: 'localhost',
+  sqs_port: 4568
 )
 fake_sqs = FakeSQS::TestIntegration.new
 
@@ -135,17 +121,17 @@ at_exit {
 }
 ```
 
-By starting it like this it will start when needed, and reset between each test.
+By starting it like this it will start when needed and reset between each test.
 
 Here's an example for RSpec to put in `spec/spec_helper.rb`:
 
 ``` ruby
-AWS.config(
-  use_ssl:            false,
-  sqs_endpoint:       "localhost",
-  sqs_port:           4568,
-  access_key_id:      "fake access key",
-  secret_access_key:  "fake secret key",
+Aws.config.update(
+  credentials: Aws::Credentials.new('<access_key_id>', '<secret_access_key>'),
+  region: 'us-east-1
+  use_ssl: false,
+  sqs_endpoint: 'localhost',
+  sqs_port: 4568
 )
 
 RSpec.configure do |config|
@@ -156,12 +142,12 @@ RSpec.configure do |config|
 end
 ```
 
-Now you can use the `:sqs metadata to enable SQS integration:
+Now you can use the `:sqs` metadata to enable SQS integration:
 
 ``` ruby
 describe "something with sqs", :sqs do
   it "should work" do
-    queue = AWS::SQS.new.queues.create("my-queue")
+    queue = Aws::SQS::Client.new.create_queue("my-queue")
   end
 end
 ```

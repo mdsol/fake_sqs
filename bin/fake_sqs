@@ -7,11 +7,11 @@ require 'fake_sqs'
 require 'optparse'
 
 options = {
-  :port => 4568,
-  :host => "0.0.0.0",
-  :verbose => false,
-  :daemonize => false,
-  :database => ":memory:"
+  port: 4568,
+  host: "0.0.0.0",
+  verbose: false,
+  daemonize: false,
+  database: ":memory:"
 }
 
 parser = OptionParser.new do |o|

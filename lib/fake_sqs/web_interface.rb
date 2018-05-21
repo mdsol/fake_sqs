@@ -27,11 +27,11 @@ module FakeSQS
       settings.api.expire
       200
     end
-    
+
     post "/fail" do
       settings.api.api_fail(params['action'])
     end
-    
+
     post "/clear_failure" do
       settings.api.clear_failure
     end
